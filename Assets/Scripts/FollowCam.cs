@@ -11,6 +11,9 @@ public class FollowCam : MonoBehaviour {
 
     [Header("Set Dynamically")]
     public float camZ; // The desired Z pos of the camera
+    private bool isExplosive = false;
+    private Vector3 explosiveProjectilePosition;
+    private float startTime;
     void Awake()
     {
         camZ = this.transform.position.z;
@@ -21,11 +24,24 @@ public class FollowCam : MonoBehaviour {
         // if (POI == null) return; // return if there is no poi // b
         // Get the position of the poi
         // Vector3 destination = POI.transform.position;
-        Vector3 destination;
+        Vector3 destination = Vector3.zero;
         // If there is no poi, return to P:[ 0, 0, 0 ]
         if (POI == null)
         {
-            destination = Vector3.zero;
+            if (isExplosive ) {
+               
+               
+                destination = explosiveProjectilePosition;
+                //keep the camera pointed at the last place of imapct for 4 seconds
+                if (Time.time - startTime >= 4.0f){
+                    isExplosive = false;
+                }
+               
+                
+            }
+            else {
+                destination = Vector3.zero;
+            }
         }
         else
         {
@@ -38,9 +54,25 @@ public class FollowCam : MonoBehaviour {
                 if (POI.GetComponent<Rigidbody>().IsSleeping())
                 {
                     // return to default view
-                    POI = null;
+                    
+                    
+                    
+                        POI = null;
+                    
                     // in the next update
                     return;
+                }
+
+                if (POI.layer == 8)
+                {
+                    //This is the explosive projectile. 
+                    isExplosive = true;
+                  //  Get The time that it arrived at the castle
+                    startTime = Time.time;
+                    //The last position of the projectile before it gets destroyed.
+                    explosiveProjectilePosition = POI.transform.position;
+                    
+                    
                 }
             }
         }
@@ -57,4 +89,5 @@ public class FollowCam : MonoBehaviour {
         // Set the orthographicSize of the Camera to keep Ground in view
         Camera.main.orthographicSize = destination.y + 10;
     }
+    
 }

@@ -6,6 +6,7 @@ public class Slingshot : MonoBehaviour {
     static private Slingshot S; // a
     [Header("Set in Inspector")] // a
     public GameObject prefabProjectile;
+    public GameObject prefabExProjectile;
     public float velocityMult = 8f; // a
     // fields set dynamically
     [Header("Set Dynamically")] // a
@@ -13,6 +14,7 @@ public class Slingshot : MonoBehaviour {
     public Vector3 launchPos; // b
     public GameObject projectile; // b
     public bool aimingMode; // b
+    private int shots = 0;
     private Rigidbody projectileRigidbody; // a
 
     static public Vector3 LAUNCH_POS
@@ -46,17 +48,41 @@ public class Slingshot : MonoBehaviour {
     }
 
     void OnMouseDown()
-    { // d
-      // The player has pressed the mouse button while over Slingshot
+    {
+        // The player has pressed the mouse button while over Slingshot
         aimingMode = true;
+        if (shots == 3)
+        {
+            // Instantiate a Projectile
+            projectile = Instantiate(prefabExProjectile) as GameObject;
+            // Start it at the launchPoint
+            projectile.transform.position = launchPos;
+            // Set it to isKinematic for now
+            //  projectile.GetComponent<Rigidbody>().isKinematic = true;
+            projectileRigidbody = projectile.GetComponent<Rigidbody>(); // a
+            projectileRigidbody.isKinematic = true;
+        } else if (shots > 3 && shots % 3 == 0) {
+            // Instantiate a Projectile
+            projectile = Instantiate(prefabExProjectile) as GameObject;
+            // Start it at the launchPoint
+            projectile.transform.position = launchPos;
+            // Set it to isKinematic for now
+            //  projectile.GetComponent<Rigidbody>().isKinematic = true;
+            projectileRigidbody = projectile.GetComponent<Rigidbody>(); // a
+            projectileRigidbody.isKinematic = true;
+        }
+        else { 
+       
         // Instantiate a Projectile
         projectile = Instantiate(prefabProjectile) as GameObject;
         // Start it at the launchPoint
         projectile.transform.position = launchPos;
         // Set it to isKinematic for now
-      //  projectile.GetComponent<Rigidbody>().isKinematic = true;
+        //  projectile.GetComponent<Rigidbody>().isKinematic = true;
         projectileRigidbody = projectile.GetComponent<Rigidbody>(); // a
         projectileRigidbody.isKinematic = true;
+    }
+        
     }
 
     void Update()
@@ -78,7 +104,9 @@ public class Slingshot : MonoBehaviour {
         }
         // Move the projectile to this new position
         Vector3 projPos = launchPos + mouseDelta;
-        projectile.transform.position = projPos;
+        if (projectile != null) {
+            projectile.transform.position = projPos;
+        }
         if (Input.GetMouseButtonUp(0))
         { // e
           // The mouse has been released
@@ -88,6 +116,7 @@ public class Slingshot : MonoBehaviour {
             FollowCam.POI = projectile;
             projectile = null;
             MissionDemolition.ShotFired(); // a
+            shots++;
             ProjectileLine.S.poi = projectile; // b
         }
     }

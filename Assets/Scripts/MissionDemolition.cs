@@ -60,7 +60,8 @@ public class MissionDemolition : MonoBehaviour {
         Goal.goalMet = false;
         UpdateGUI();
         mode = GameMode.playing;
-    }    void UpdateGUI()
+    }
+    void UpdateGUI()
     {
         // Show the data in the GUITexts
         uitLevel.text = "Level: " + (level + 1) + "of " + levelMax;
@@ -79,7 +80,9 @@ public class MissionDemolition : MonoBehaviour {
             // Start the next level in 2 seconds
             Invoke("NextLevel", 2f);
         }
-    }    void NextLevel()
+    }
+
+    void NextLevel()
     {
         level++;
         if (level == levelMax)
@@ -115,5 +118,7 @@ public class MissionDemolition : MonoBehaviour {
     public static void ShotFired()
     { // d
         S.shotsTaken++;
-    }
+    }
+
+
 }
